@@ -1,0 +1,24 @@
+perhaps {
+	Write("You need to provide a directory to sort!", RED);
+	Exit(1);
+} if (ArgumentCount() == 0);
+
+pathToSort = Argument(0);
+
+extentionsJson = Json(pathToSort + "/extentions.json");
+
+arr = JsonArrayToArray(JsonRead(extentionsJson, "Ext"));
+
+Write("Selected extentions that will be sorted:");
+each (el in arr) {
+	Write(el);
+	DirectoryCreate(pathToSort + "/" + StringRemove(el, ".") );
+}
+
+each (file in AllFilesIn(pathToSort)) {
+	perhaps {
+		fileDestinationFolder = StringRemove(FileGetExtention(file), ".");
+		Write("Moving " + file + " to " + fileDestinationFolder);
+		FileMove(file, pathToSort + "/" + fileDestinationFolder + "/" + FileGetName(file));
+	} if (!StringEndsWith(file, ".json"));
+}
